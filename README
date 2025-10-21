@@ -1,0 +1,4 @@
+Set command path (windows powershell)
+```
+$env:Path += ';C:\ProgramFilesNoSpaces\iverilog\bin'
+```
