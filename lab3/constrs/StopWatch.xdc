@@ -1,47 +1,40 @@
-# Basys 3 Stopwatch Constraints (Starter)
+## Basys 3 Stopwatch Constraints (XDC)
+## To use it in a project:
+## - uncomment or edit the lines corresponding to used pins
+## - ensure port names (after get_ports) match the top-level signals
 
-# Clock (100 MHz) — Basys 3 W5
-set_property PACKAGE_PIN W5 [get_ports {clk_100mhz}]
-set_property IOSTANDARD LVCMOS33 [get_ports {clk_100mhz}]
-create_clock -add -name sys_clk_pin -period 10.000 -waveform {0 5} [get_ports {clk_100mhz}]
+## Clock signal (100 MHz)
+set_property -dict { PACKAGE_PIN W5 IOSTANDARD LVCMOS33 } [get_ports {clk_100mhz}]
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports {clk_100mhz}]
 
-# Buttons (verify exact pins in Basys-3 Master XDC)
-set_property PACKAGE_PIN U18 [get_ports {reset_btn}]
-set_property IOSTANDARD LVCMOS33 [get_ports {reset_btn}]
+## Buttons
+set_property -dict { PACKAGE_PIN U18 IOSTANDARD LVCMOS33 } [get_ports {reset_btn}]
+set_property -dict { PACKAGE_PIN T17 IOSTANDARD LVCMOS33 } [get_ports {pause_btn}]
 
-set_property PACKAGE_PIN T17 [get_ports {pause_btn}]
-set_property IOSTANDARD LVCMOS33 [get_ports {pause_btn}]
+## Switches (verify against Master XDC)
+set_property -dict { PACKAGE_PIN V17 IOSTANDARD LVCMOS33 } [get_ports {sel_sw}]
+set_property -dict { PACKAGE_PIN V16 IOSTANDARD LVCMOS33 } [get_ports {adj_sw}]
 
-# Switches (example pins; verify against Master XDC)
-# Update these two mappings to the correct SW pins
-set_property PACKAGE_PIN V17 [get_ports {sel_sw}]
-set_property IOSTANDARD LVCMOS33 [get_ports {sel_sw}]
+## 7-Segment Display (active-low)
+## an[3:0] (leftmost=an[3], rightmost=an[0])
+set_property -dict { PACKAGE_PIN U2 IOSTANDARD LVCMOS33 } [get_ports {an[3]}]
+set_property -dict { PACKAGE_PIN U4 IOSTANDARD LVCMOS33 } [get_ports {an[2]}]
+set_property -dict { PACKAGE_PIN V4 IOSTANDARD LVCMOS33 } [get_ports {an[1]}]
+set_property -dict { PACKAGE_PIN W4 IOSTANDARD LVCMOS33 } [get_ports {an[0]}]
 
-set_property PACKAGE_PIN V16 [get_ports {adj_sw}]
-set_property IOSTANDARD LVCMOS33 [get_ports {adj_sw}]
+## seg[7:0] (CA..CG = seg[0]..seg[6], DP = seg[7])
+set_property -dict { PACKAGE_PIN W7 IOSTANDARD LVCMOS33 } [get_ports {seg[0]}]
+set_property -dict { PACKAGE_PIN W6 IOSTANDARD LVCMOS33 } [get_ports {seg[1]}]
+set_property -dict { PACKAGE_PIN U8 IOSTANDARD LVCMOS33 } [get_ports {seg[2]}]
+set_property -dict { PACKAGE_PIN V8 IOSTANDARD LVCMOS33 } [get_ports {seg[3]}]
+set_property -dict { PACKAGE_PIN U5 IOSTANDARD LVCMOS33 } [get_ports {seg[4]}]
+set_property -dict { PACKAGE_PIN V5 IOSTANDARD LVCMOS33 } [get_ports {seg[5]}]
+set_property -dict { PACKAGE_PIN U7 IOSTANDARD LVCMOS33 } [get_ports {seg[6]}]
+set_property -dict { PACKAGE_PIN V7 IOSTANDARD LVCMOS33 } [get_ports {seg[7]}]
 
-# Seven-Segment Display (active-low anodes and segments) — verify all pins
-# an[3:0]
-set_property PACKAGE_PIN U2  [get_ports {an[3]}]
-set_property PACKAGE_PIN U4  [get_ports {an[2]}]
-set_property PACKAGE_PIN V4  [get_ports {an[1]}]
-set_property PACKAGE_PIN W4  [get_ports {an[0]}]
-set_property IOSTANDARD LVCMOS33 [get_ports {an[3] an[2] an[1] an[0]}]
+## NOTE: Verify all pin locations against the official Basys-3 Master XDC
+## and ensure the port names match your top-level design.
 
-# seg[7:0] (dp is seg[7])
-set_property PACKAGE_PIN W7 [get_ports {seg[0]}]
-set_property PACKAGE_PIN W6 [get_ports {seg[1]}]
-set_property PACKAGE_PIN U8 [get_ports {seg[2]}]
-set_property PACKAGE_PIN V8 [get_ports {seg[3]}]
-set_property PACKAGE_PIN U5 [get_ports {seg[4]}]
-set_property PACKAGE_PIN V5 [get_ports {seg[5]}]
-set_property PACKAGE_PIN U7 [get_ports {seg[6]}]
-set_property PACKAGE_PIN V7 [get_ports {seg[7]}]
-set_property IOSTANDARD LVCMOS33 [get_ports {seg[7] seg[6] seg[5] seg[4] seg[3] seg[2] seg[1] seg[0]}]
-
-# NOTE: Pin locations above follow common Basys-3 mappings; verify against the
-# official Basys-3 Master XDC for your board revision.
-
-# Recommended global configuration (from Basys-3 master XDC)
+## Recommended global configuration (from Basys-3 master XDC)
 set_property CONFIG_VOLTAGE 3.3 [current_design]
 set_property CFGBVS VCCO [current_design]

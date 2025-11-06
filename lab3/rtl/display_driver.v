@@ -30,10 +30,11 @@ module display_driver(
   // Select digit based on MSBs of refresh
   always @* begin
     case (refresh[N-1:N-2])
-      2'b00: begin an = 4'b1110; idx = 2'd0; hex_in = hex0; end // rightmost
-      2'b01: begin an = 4'b1101; idx = 2'd1; hex_in = hex1; end
-      2'b10: begin an = 4'b1011; idx = 2'd2; hex_in = hex2; end
-      2'b11: begin an = 4'b0111; idx = 2'd3; hex_in = hex3; end // leftmost
+      // Map left->right to indices 0,1,2,3 (hex0..hex3)
+      2'b00: begin an = 4'b0111; idx = 2'd0; hex_in = hex0; end // leftmost
+      2'b01: begin an = 4'b1011; idx = 2'd1; hex_in = hex1; end
+      2'b10: begin an = 4'b1101; idx = 2'd2; hex_in = hex2; end
+      2'b11: begin an = 4'b1110; idx = 2'd3; hex_in = hex3; end // rightmost
       default: begin an = 4'b1111; idx = 2'd0; hex_in = 4'd0; end
     endcase
   end
@@ -58,7 +59,7 @@ module display_driver(
   // Compose segments with blink gating
   always @* begin
     // default: dp off (1), segments according to decode (active-low)
-    seg = {1'b1, seg7};
+    seg = {1'b1, seg7[0], seg7[1], seg7[2], seg7[3], seg7[4], seg7[5], seg7[6]};
     // Blink only in adjust mode for selected digits
     if (adj) begin
       if (blink_mask[idx] && (blink_state == 1'b0)) begin
@@ -73,4 +74,3 @@ module display_driver(
   end
 
 endmodule
-
