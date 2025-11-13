@@ -2,7 +2,6 @@
 
 module clk_gen(
   input  wire clk_100mhz,
-  input  wire rst,
   output reg  en_1hz,
   output reg  en_2hz,
   output reg  en_fast,
@@ -18,8 +17,8 @@ module clk_gen(
   localparam integer DIV_2HZ   = 50_000_000;
   // fast (≈381 Hz): pulse on 2^18 wrap
   localparam integer CW_FAST   = 18; // counter width
-  // blink (>1 Hz and != 2 Hz), choose 4 Hz: 25,000,000 cycles
-  localparam integer DIV_BLINK = 25_000_000; // 4 Hz
+  // blink 1.5 Hz = 66,666,666 cycles
+  localparam integer DIV_BLINK = 66_666_666; 
 
   reg [26:0] cnt_1hz;
   reg [25:0] cnt_2hz; // 26 bits enough for 50e6
@@ -27,48 +26,47 @@ module clk_gen(
   reg [24:0] cnt_blink; // 25 bits enough for 25e6
 
   always @(posedge clk_100mhz) begin
-    if (rst) begin
-      cnt_1hz   <= DIV_1HZ-1;
-      cnt_2hz   <= DIV_2HZ-1;
-      cnt_fast  <= {CW_FAST{1'b0}};
-      cnt_blink <= DIV_BLINK-1;
-      en_1hz    <= 1'b0;
-      en_2hz    <= 1'b0;
-      en_fast   <= 1'b0;
-      en_blink  <= 1'b0;
+    // 1 Hz
+    if (cnt_1hz == 0) begin
+      cnt_1hz <= DIV_1HZ-1;
+      en_1hz  <= 1'b1;
     end else begin
-      // 1 Hz
-      if (cnt_1hz == 0) begin
-        cnt_1hz <= DIV_1HZ-1;
-        en_1hz  <= 1'b1;
-      end else begin
-        cnt_1hz <= cnt_1hz - 1;
-        en_1hz  <= 1'b0;
-      end
+      cnt_1hz <= cnt_1hz - 1;
+      en_1hz  <= 1'b0;
+    end
 
-      // 2 Hz
-      if (cnt_2hz == 0) begin
-        cnt_2hz <= DIV_2HZ-1;
-        en_2hz  <= 1'b1;
-      end else begin
-        cnt_2hz <= cnt_2hz - 1;
-        en_2hz  <= 1'b0;
-      end
+    // 2 Hz
+    if (cnt_2hz == 0) begin
+      cnt_2hz <= DIV_2HZ-1;
+      en_2hz  <= 1'b1;
+    end else begin
+      cnt_2hz <= cnt_2hz - 1;
+      en_2hz  <= 1'b0;
+    end
 
-      // fast: pulse on wrap of 18-bit counter (~381 Hz)
-      cnt_fast <= cnt_fast + 1'b1;
-      en_fast  <= (cnt_fast == {CW_FAST{1'b1}});
+    // fast: pulse on wrap of 18-bit counter (~381 Hz)
+    cnt_fast <= cnt_fast + 1'b1;
+    en_fast  <= (cnt_fast == {CW_FAST{1'b1}});
 
-      // blink 4 Hz
-      if (cnt_blink == 0) begin
-        cnt_blink <= DIV_BLINK-1;
-        en_blink  <= 1'b1;
-      end else begin
-        cnt_blink <= cnt_blink - 1;
-        en_blink  <= 1'b0;
-      end
+    // blink 4 Hz
+    if (cnt_blink == 0) begin
+      cnt_blink <= DIV_BLINK-1;
+      en_blink  <= 1'b1;
+    end else begin
+      cnt_blink <= cnt_blink - 1;
+      en_blink  <= 1'b0;
     end
   end
 
-endmodule
+  initial begin
+    cnt_1hz   = DIV_1HZ-1;
+    cnt_2hz   = DIV_2HZ-1;
+    cnt_fast  = {CW_FAST{1'b0}};
+    cnt_blink = DIV_BLINK-1;
+    en_1hz    = 1'b0;
+    en_2hz    = 1'b0;
+    en_fast   = 1'b0;
+    en_blink  = 1'b0;
+  end
 
+endmodule

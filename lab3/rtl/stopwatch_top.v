@@ -26,7 +26,6 @@ module stopwatch_top(
   // Clock generator
   clk_gen u_clk_gen(
     .clk_100mhz(clk_100mhz),
-    .rst       (rst_level),
     .en_1hz    (en_1hz),
     .en_2hz    (en_2hz),
     .en_fast   (en_fast),
@@ -98,4 +97,3 @@ module stopwatch_top(
   );
 
 endmodule
-

@@ -105,5 +105,12 @@ module time_core(
     end
   end
 
-endmodule
+  initial begin
+    hex3 = 4'd0;
+    hex2 = 4'd0;
+    hex1 = 4'd0;
+    hex0 = 4'd0;
+    run  = 1'b1;
+  end
 
+endmodule
